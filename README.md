@@ -1,65 +1,80 @@
-# Custom Distributed Application Builder with Custom Resource Naming
+Below is the updated README.md that reflects your new extension method and its capabilities:
 
-This project extends the standard distributed application builder to support custom resource naming conventions when provisioning Azure resources. By integrating custom naming logic, you can enforce consistent naming patterns (for example, embedding deployment stages) across your infrastructure.
+---
 
+```markdown
+# Distributed Application Builder Extensions for Custom Resource Naming
+
+This project provides an extension method that integrates custom resource naming conventions into your distributed application provisioning pipeline. With this approach, you can configure multiple parameters that contribute to the final resource names and supply a custom interpolation handler to generate names that adhere to your standards.
+
+---
 
 ## Overview
 
-This solution provides a set of components that work together to **Customize resource names:** Apply a naming convention that concatenates a resource abbreviation, a stage identifier, and a custom value.
+The extension method adds a set of parameters to your builder and registers a custom resource name property resolver. The resolver constructs the final resource name by combining a resource abbreviation, one or more dynamic parameters, and a custom identifier. The name is then interpolated using a delegate provided by the consumer, ensuring that naming follows a consistent pattern based on allowed characters (e.g., hyphen, underscore, or period).
 
+### Key Features
 
-The key components are:
+- **Multiple Parameter Support:**  
+  Define a collection of parameter names (e.g., "stage", "environment") that are injected into your builder and used during name resolution.
 
-- **AzureResourceExtensions:**  
-  Provides an extension method (`WithCustomNamingConvention`) to apply custom naming conventions on a provisionable resource.  
+- **Custom Interpolation Handler:**  
+  Provide a delegate to control how the final resource name is interpolated. This handler receives the dynamic parameters, a chosen separator, the resource abbreviation, and a custom identifier to build the complete name.
 
-- **DistributedApplicationBuilderExtensions:**  
-This static class defines the `WithCustomNamingConvention` extension method, which adds the stage parameter and configures the Azure provisioning options. This method is intended to be chained with your existing distributed application builder setup.
-
-- **CustomResourceNameExpression:**  
-  Encapsulates the custom naming expression by combining a resource abbreviation with a user-defined identifier.  
-
-- **CustomResourceNamePropertyResolver:**  
-  Implements the logic to resolve and interpolate the final resource name. It checks for allowed characters to determine a suitable separator and uses a stage parameter to build a name like:  
-  `<resourceAbbreviation><separator><stage><separator><identifier>`  
-
-- **CustomResourceNameProvisioningOutput:**  
-  Wraps the output of the naming resolution process as a provisioning output, making the resolved name available for further consumption.  
+- **Consistent Naming Conventions:**  
+  Ensures all resource names are generated following a consistent format, such as:  
+  `<resourceAbbreviation><separator><parameter1><separator><parameter2><separator><identifier>`
 
 ---
 
 ## Example Usage
 
-Below is a sample snippet demonstrating how to use the builder and apply a custom naming convention to an Azure Cosmos DB resource:
+Below is a sample snippet demonstrating how to integrate the extension method into your provisioning pipeline:
 
 ```csharp
-var builder = CustomDistributedApplicationBuilder.CreateBuilder(args);
+var builder = DistributedApplicationBuilder.CreateBuilder(args);
+
+
+// Configure the custom naming convention by specifying the parameter names ("stage" and "territory")
+// and providing a lambda function that defines how the final resource name should be built.
+// The lambda receives the dictionary of provisioning parameters, a separator string,
+// the resource abbreviation, and a custom identifier, then returns the interpolated name.
+builder.WithCustomNamingConvention(["stage", "territory"], (parameters, separator, abbrieviation, identifier) =>
+                $"{abbrieviation}{separator}{parameters["territory"]}{separator}{parameters["stage"]}{separator}{identifier}");
+
 
 builder.AddAzureCosmosDB("cosmosdb")
        .ConfigureInfrastructure(infr =>
        {
            if (infr.GetProvisionableResources().OfType<CosmosDBAccount>().SingleOrDefault() is CosmosDBAccount cosmosDBAccount)
            {
+               // Apply custom naming convention to the Cosmos DB account
                cosmosDBAccount.WithCustomNamingConvention("cosmos", "playground");
-           };
+           }
        })
        .AddCosmosDatabase("shop")
        .AddContainer("customers", "/partitionKey");
 ```
 
-### What Happens Behind the Scenes
+### How It Works
 
-- **Stage Parameter Injection:**  
-  The `CustomDistributedApplicationBuilder` injects a stage parameter during construction, ensuring that all resources are tagged with the correct deployment stage.
+1. **Parameter Injection:**  
+   The extension method accepts a collection of parameter names. For each provided name, a corresponding parameter is added to the builder. These parameters are later used by the naming resolver to construct the resource name.
 
-- **Custom Naming Resolution:**  
-  The extension method `WithCustomNamingConvention` creates a `CustomResourceNameExpression` which is later resolved by the `CustomResourceNamePropertyResolver`. This resolver:
-  - Checks if the resource has a custom naming expression.
-  - Determines the valid separator (e.g., hyphen, underscore, period) based on the resource’s naming constraints.
-  - Constructs a final name by interpolating the resource abbreviation, the stage, and the custom identifier.
+2. **Custom Resource Name Resolver:**  
+   The method registers a custom resource name property resolver (`CustomResourceNamePropertyResolver`) at the start of the provisioning resolver chain. This resolver:
+   - Checks for a custom resource name expression on the resource.
+   - Uses the provided parameters and the custom interpolation handler to build the final resource name.
+   - Selects an appropriate separator (hyphen, underscore, or period) based on the resource’s allowed characters.
 
-- **Provisioning Output:**  
-  If applicable, the resolved name is wrapped in a `CustomResourceNameProvisioningOutput` for consumption in downstream provisioning steps.
+3. **Resource Name Interpolation:**  
+   The handler delegate is invoked with:
+   - A dictionary of provisioning parameters.
+   - The chosen separator.
+   - The resource abbreviation (from the custom resource name expression).
+   - The custom identifier.
+   
+   The delegate then constructs a `BicepInterpolatedStringHandler` that defines the final resource name.
 
 ---
 
@@ -68,27 +83,39 @@ builder.AddAzureCosmosDB("cosmosdb")
 ### Prerequisites
 
 - .NET SDK (as required by your project)
-- Dependencies on `Aspire.Hosting`, `Azure.Provisioning`, and related libraries.
+- References to:
+  - `Aspire.Hosting.ApplicationModel`
+  - `Azure.Provisioning`
+  - `Azure.Provisioning.Expressions`
+  - `Microsoft.Extensions.DependencyInjection`
+- Other dependencies as needed by your project
 
 ### Installation
 
-1. Clone or add this project to your solution.
-2. Ensure that your project references the necessary Azure provisioning packages.
-3. Integrate the custom builder in your application startup by replacing or extending your existing `DistributedApplicationBuilder`.
+1. **Clone or Integrate:**  
+   Add this project to your solution or incorporate the provided files into your existing codebase.
+
+2. **Reference the Extension:**  
+   Ensure your project references the `DistributedApplicationBuilderExtensions` class to enable the custom naming extension.
+
+3. **Configure the Builder:**  
+   Update your application startup code to use the `WithCustomNamingConvention` extension method with the appropriate parameter names and handler delegate.
 
 ### Running the Application
 
-After configuring your builder as shown in the example usage, build and run your application. The custom naming resolver will automatically format resource names based on the provided conventions.
+After configuring your builder, build and run your application. The custom naming resolver will automatically generate resource names based on the provided parameters and custom logic during the provisioning process.
 
 ---
 
 ## Customization
 
-- **Custom Abbreviations and Identifiers:**  
-  Modify the parameters passed to `WithCustomNamingConvention` to suit your naming standards.
+- **Parameter Names:**  
+  Modify the list of parameter names to suit your organizational requirements.
 
-- **Naming Separators:**  
-  The resolver dynamically chooses a separator based on allowed characters. Adjust the logic in `CustomResourceNamePropertyResolver` if you require a different behavior.
+- **Interpolation Logic:**  
+  Update the handler delegate to control how the final resource name is constructed. This flexibility allows you to incorporate additional parameters or alter the formatting as needed.
 
-- **Stage Parameter:**  
-  The `stage` parameter is injected via the builder. You can configure it to match your deployment environments (e.g., development, staging, production).
+- **Naming Requirements:**  
+  The resolver dynamically selects a separator based on the allowed characters for the resource. Adjust this logic within the resolver if your naming rules change.
+
+---

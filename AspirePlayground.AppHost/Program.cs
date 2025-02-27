@@ -1,6 +1,11 @@
 using Azure.Provisioning.CosmosDB;
 
-var builder = DistributedApplication.CreateBuilder(args).WithCustomNamingConvention();
+
+var builder = DistributedApplication.CreateBuilder(args);
+
+builder.WithCustomNamingConvention(["stage", "territory"], (parameters, separator, abbrieviation, identifier) =>
+                $"{abbrieviation}{separator}{parameters["territory"]}{separator}{parameters["stage"]}{separator}{identifier}");
+
 
 builder.AddAzureCosmosDB("cosmosdb")
        .ConfigureInfrastructure(infr =>
