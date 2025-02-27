@@ -1,8 +1,3 @@
-Below is the updated README.md that reflects your new extension method and its capabilities:
-
----
-
-```markdown
 # Distributed Application Builder Extensions for Custom Resource Naming
 
 This project provides an extension method that integrates custom resource naming conventions into your distributed application provisioning pipeline. With this approach, you can configure multiple parameters that contribute to the final resource names and supply a custom interpolation handler to generate names that adhere to your standards.
