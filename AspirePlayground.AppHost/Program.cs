@@ -8,13 +8,7 @@ builder.AddCustomNamingConvention(["stage", "territory"], (parameters, separator
 
 
 builder.AddAzureCosmosDB("cosmosdb")
-       .ConfigureInfrastructure(infr =>
-       {
-           if (infr.GetProvisionableResources().OfType<CosmosDBAccount>().SingleOrDefault() is CosmosDBAccount cosmosDBAccount)
-           {
-               cosmosDBAccount.SetNameProperties("cosmos", "playground");
-           };
-       })
+       .AddNameProperties(resources => resources.OfType<CosmosDBAccount>().FirstOrDefault(), "cosmos", "playground")
        .AddCosmosDatabase("shop")
        .AddContainer("customers", "/partitionKey");
 

@@ -43,15 +43,9 @@ builder.WithCustomNamingConvention(["stage", "territory"], (parameters, separato
                 $"{abbrieviation}{separator}{parameters["territory"]}{separator}{parameters["stage"]}{separator}{identifier}");
 
 
+
 builder.AddAzureCosmosDB("cosmosdb")
-       .ConfigureInfrastructure(infr =>
-       {
-           if (infr.GetProvisionableResources().OfType<CosmosDBAccount>().SingleOrDefault() is CosmosDBAccount cosmosDBAccount)
-           {
-               // Apply custom naming convention to the Cosmos DB account
-               cosmosDBAccount.SetNameProperties("cosmos", "playground");
-           }
-       })
+       .AddNameProperties(resources => resources.OfType<CosmosDBAccount>().FirstOrDefault(), "cosmos", "playground")
        .AddCosmosDatabase("shop")
        .AddContainer("customers", "/partitionKey");
 ```
