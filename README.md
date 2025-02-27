@@ -11,7 +11,7 @@ The extension method adds a set of parameters to your builder and registers a cu
 ### Key Features
 
 - **Multiple Parameter Support:**  
-  Define a collection of parameter names (e.g., "stage", "environment") that are injected into your builder and used during name resolution.
+  Define a collection of parameter names (e.g., "stage", "territory") that are injected into your builder and used during name resolution.
 
 - **Custom Interpolation Handler:**  
   Provide a delegate to control how the final resource name is interpolated. This handler receives the dynamic parameters, a chosen separator, the resource abbreviation, and a custom identifier to build the complete name.
