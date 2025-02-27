@@ -49,7 +49,7 @@ builder.AddAzureCosmosDB("cosmosdb")
            if (infr.GetProvisionableResources().OfType<CosmosDBAccount>().SingleOrDefault() is CosmosDBAccount cosmosDBAccount)
            {
                // Apply custom naming convention to the Cosmos DB account
-               cosmosDBAccount.WithCustomNamingConvention("cosmos", "playground");
+               cosmosDBAccount.SetNameProperties("cosmos", "playground");
            }
        })
        .AddCosmosDatabase("shop")

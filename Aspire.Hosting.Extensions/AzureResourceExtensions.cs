@@ -20,7 +20,7 @@ public static class AzureResourceExtensions
     /// This method creates a <see cref="CustomResourceNameExpression"/> using the provided abbreviation and identifier.
     /// If the resource contains a provisionable property for its name, the method sets this property using the custom expression.
     /// </remarks>
-    public static void WithCustomNamingConvention(this ProvisionableResource resource, string abbreviation, string identifier)
+    public static void SetNameProperties(this ProvisionableResource resource, string abbreviation, string identifier)
     {
         var expression = new CustomResourceNameExpression(abbreviation, identifier);
         if (resource.ProvisionableProperties.TryGetValue(nameof(Resource.Name), out IBicepValue? name))
