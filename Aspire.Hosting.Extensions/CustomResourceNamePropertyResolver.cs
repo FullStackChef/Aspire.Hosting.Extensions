@@ -6,7 +6,7 @@ using Azure.Provisioning.Primitives;
 
 namespace Aspire.Hosting;
 
-internal class CustomResourceNamePropertyResolver(CustomDistributedApplicationBuilder builder) : DynamicResourceNamePropertyResolver
+internal class CustomResourceNamePropertyResolver(IDistributedApplicationBuilder builder) : DynamicResourceNamePropertyResolver
 {
     public override void ResolveProperties(ProvisionableConstruct construct, ProvisioningBuildOptions options)
     {
@@ -31,18 +31,18 @@ internal class CustomResourceNamePropertyResolver(CustomDistributedApplicationBu
     }
     public override BicepValue<string>? ResolveName(ProvisioningBuildOptions options, ProvisionableResource resource, ResourceNameRequirements requirements)
     {
+
         if (resource.ParentInfrastructure is AzureResourceInfrastructure infrastructure &&
             resource.ProvisionableProperties.TryGetValue(nameof(Resource.Name), out IBicepValue? name) &&
-            builder.stage.AsProvisioningParameter(infrastructure) is ProvisioningParameter stage &&
+            builder.Resources.FirstOrDefault(r => r.Name == "stage") is ParameterResource stageParam &&
             name.Kind == BicepValueKind.Expression && name.Expression is CustomResourceNameExpression customResourceName)
         {
-
-
             string separator = requirements.ValidCharacters.HasFlag(ResourceNameCharacters.Hyphen) ? "-" :
                                requirements.ValidCharacters.HasFlag(ResourceNameCharacters.Underscore) ? "_" :
                                requirements.ValidCharacters.HasFlag(ResourceNameCharacters.Period) ? "." : string.Empty;
 
             var resourceType = customResourceName.ResourceAbbreviation;
+            var stage = stageParam.AsProvisioningParameter(infrastructure);
 
             return BicepFunction.Interpolate($"{resourceType}{separator}{stage}{separator}{customResourceName.Value}");
         }

@@ -13,8 +13,8 @@ The key components are:
 - **AzureResourceExtensions:**  
   Provides an extension method (`WithCustomNamingConvention`) to apply custom naming conventions on a provisionable resource.  
 
-- **CustomDistributedApplicationBuilder:**  
-  A specialized builder that extends the default `DistributedApplicationBuilder` and injects a stage parameter. It also registers the custom resource name property resolver.  
+- **DistributedApplicationBuilderExtensions:**  
+This static class defines the `WithCustomNamingConvention` extension method, which adds the stage parameter and configures the Azure provisioning options. This method is intended to be chained with your existing distributed application builder setup.
 
 - **CustomResourceNameExpression:**  
   Encapsulates the custom naming expression by combining a resource abbreviation with a user-defined identifier.  

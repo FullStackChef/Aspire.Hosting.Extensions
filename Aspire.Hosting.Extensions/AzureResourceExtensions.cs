@@ -6,7 +6,6 @@ namespace Aspire.Hosting;
 
 public static class AzureResourceExtensions
 {
-
     public static void WithCustomNamingConvention(this ProvisionableResource resource, string abbreviation, string identifier)
     {
         var expression = new CustomResourceNameExpression(abbreviation, identifier);

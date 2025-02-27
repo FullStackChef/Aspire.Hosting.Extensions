@@ -1,6 +1,6 @@
 using Azure.Provisioning.CosmosDB;
 
-var builder = CustomDistributedApplicationBuilder.CreateBuilder(args);
+var builder = DistributedApplication.CreateBuilder(args).WithCustomNamingConvention();
 
 builder.AddAzureCosmosDB("cosmosdb")
        .ConfigureInfrastructure(infr =>
