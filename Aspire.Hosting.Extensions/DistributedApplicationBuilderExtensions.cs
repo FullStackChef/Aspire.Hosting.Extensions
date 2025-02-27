@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Aspire.Hosting;
 
 /// <summary>
-/// Provides extension methods for configuring the <see cref="IDistributedApplicationBuilder"/> with custom resource naming conventions.
+/// Provides extension methods to add custom resource naming conventions to the <see cref="IDistributedApplicationBuilder"/> .
 /// </summary>
 public static class DistributedApplicationBuilderExtensions
 {
@@ -26,7 +26,7 @@ public static class DistributedApplicationBuilderExtensions
     /// <returns>
     /// The original <see cref="IDistributedApplicationBuilder"/> instance with the custom naming convention configured.
     /// </returns>
-    public static IDistributedApplicationBuilder WithCustomNamingConvention(
+    public static IDistributedApplicationBuilder AddCustomNamingConvention(
         this IDistributedApplicationBuilder builder,
         IEnumerable<string> parametersNames,
         Func<IReadOnlyDictionary<string, ProvisioningParameter>, string, BicepValue<string>, string, BicepInterpolatedStringHandler> handler)

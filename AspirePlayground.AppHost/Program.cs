@@ -3,7 +3,7 @@ using Azure.Provisioning.CosmosDB;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
-builder.WithCustomNamingConvention(["stage", "territory"], (parameters, separator, abbrieviation, identifier) =>
+builder.AddCustomNamingConvention(["stage", "territory"], (parameters, separator, abbrieviation, identifier) =>
                 $"{abbrieviation}{separator}{parameters["territory"]}{separator}{parameters["stage"]}{separator}{identifier}");
 
 
