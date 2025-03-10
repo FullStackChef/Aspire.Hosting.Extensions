@@ -30,8 +30,8 @@ steps:
   displayName: 'Build Solution'
   inputs:
     command: 'build'
-    projects: $(apiProject)
-    arguments: '--configuration $(buildConfiguration)'
+    projects: '$(apiProject)'
+    arguments: '--configuration $(buildConfiguration) --version $(version)'
 
 - task: DotNetCoreCLI@2
   displayName: 'Pack API Service'
@@ -41,8 +41,7 @@ steps:
     nobuild: true
     includesymbols: true
     includesource: true
-    versioningScheme: 'byEnvVar'
-    versionEnvVar: 'version'
+    versioningScheme: 'off'
 
 - task: DotNetCoreCLI@2
   displayName: 'Push NuGet Package'
