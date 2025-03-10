@@ -11,9 +11,7 @@ variables:
   buildConfiguration: 'Release'
   apiProject: 'AspirePlayground.ApiService/AspirePlayground.ApiService.csproj'
   version: '1.0.0.$(Build.BuildId)'
-  nugetSource: 'https://api.nuget.org/v3/index.json'
-  # Ensure you add NuGetApiKey as a secure variable in your pipeline settings
-  nugetApiKey: $(NuGetApiKey)
+  
 
 steps:
 - task: UseDotNet@2
@@ -21,19 +19,18 @@ steps:
   inputs:
     packageType: 'sdk'
     version: '9.x.x'
-    includePreviewVersions: true
 
 - task: DotNetCoreCLI@2
   displayName: 'Restore NuGet Packages'
   inputs:
     command: 'restore'
-    projects: '**/*.sln'
+    projects: $(apiProject)
 
 - task: DotNetCoreCLI@2
   displayName: 'Build Solution'
   inputs:
     command: 'build'
-    projects: '**/*.sln'
+    projects: $(apiProject)
     arguments: '--configuration $(buildConfiguration)'
 
 - task: DotNetCoreCLI@2
@@ -48,6 +45,5 @@ steps:
   inputs:
     command: 'push'
     packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
-    nuGetFeedType: 'external'
-    externalFeedUrl: '$(nugetSource)'
-    externalFeedPublishKey: '$(nugetApiKey)'
+    nuGetFeedType: 'internal'
+    publishVstsFeed: 'cf0c21e4-1848-49ee-b3bc-c7e03c3de26f'
