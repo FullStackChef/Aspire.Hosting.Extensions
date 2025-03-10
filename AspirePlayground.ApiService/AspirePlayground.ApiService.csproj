@@ -16,5 +16,6 @@
 
 	<PropertyGroup>
 		<IsPackable>true</IsPackable>
+		<SelfContained>true</SelfContained>
 	</PropertyGroup>
 </Project>
