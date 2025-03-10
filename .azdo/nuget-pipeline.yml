@@ -35,5 +35,12 @@ steps:
     includesource: true
     versioningScheme: 'byEnvVar'
     versionEnvVar: 'version'
+    arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
 
-
+- task: DotNetCoreCLI@2
+  displayName: 'Push NuGet Package'
+  inputs:
+    command: 'push'
+    packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
+    nuGetFeedType: 'internal'
+    publishVstsFeed: 'cf0c21e4-1848-49ee-b3bc-c7e03c3de26f'
