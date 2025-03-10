@@ -37,7 +37,7 @@ steps:
   displayName: 'Pack API Service'
   inputs:
     command: 'pack'
-    projects: '$(apiProject)'
+    packagesToPack: '$(apiProject)'
     arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory) /p:PackageVersion=$(version)'
 
 - task: DotNetCoreCLI@2
