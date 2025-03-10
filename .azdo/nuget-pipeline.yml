@@ -18,7 +18,7 @@ steps:
   displayName: 'Install .NET 9 SDK'
   inputs:
     packageType: 'sdk'
-    version: '9.x.x'
+    version: '9.x'
 
 - task: DotNetCoreCLI@2
   displayName: 'Restore NuGet Packages'
