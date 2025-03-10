@@ -38,7 +38,11 @@ steps:
   inputs:
     command: 'pack'
     packagesToPack: '$(apiProject)'
-    arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory) /p:PackageVersion=$(version)'
+    nobuild: true
+    includesymbols: true
+    includesource: true
+    versioningScheme: 'byEnvVar'
+    versionEnvVar: 'version'
 
 - task: DotNetCoreCLI@2
   displayName: 'Push NuGet Package'
