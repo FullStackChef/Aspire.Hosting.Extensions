@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<Sdk Name="Aspire.AppHost.Sdk" Version="9.1.0" />
 
@@ -12,7 +12,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Aspire.Hosting.Extensions\Aspire.Hosting.Extensions.csproj"  IsAspireProjectResource="false"/>
+		<ProjectReference Include="..\Aspire.Hosting.Extensions\Aspire.Hosting.Extensions.csproj" IsAspireProjectResource="false" />
+		<ProjectReference Include="..\Aspire.Hosting.Nuget\Aspire.Hosting.Nuget.csproj" IsAspireProjectResource="false" />
 		<ProjectReference Include="..\AspirePlayground.ApiService\AspirePlayground.ApiService.csproj" />
 		<ProjectReference Include="..\AspirePlayground.Web\AspirePlayground.Web.csproj" />
 	</ItemGroup>
@@ -20,6 +21,11 @@
 	<ItemGroup>
 		<PackageReference Include="Aspire.Hosting.AppHost" Version="9.1.0" />
 		<PackageReference Include="Aspire.Hosting.Azure.CosmosDB" Version="9.1.0" />
+		<PackageReference Include="Aspire.Hosting.Azure.Sql" Version="9.1.0" IsAspirePackageResource="true" />
 	</ItemGroup>
+
+
+	<Import Project="..\Aspire.Hosting.Nuget\build\Aspire.Hosting.Nuget.targets" />
+
 
 </Project>
